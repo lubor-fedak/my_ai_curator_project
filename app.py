@@ -36,8 +36,8 @@ def add_user():
             db.session.add(new_user)
             db.session.commit()
             return redirect(url_for('users'))
-        except:
-            return 'There was an issue adding the user'
+        except Exception as e:
+            return f'There was an issue adding the user: {str(e)}'
     else:
         return render_template('add_user.html')
 
