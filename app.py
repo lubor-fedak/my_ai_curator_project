@@ -2,20 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}')"
+        return f'<User {self.username}>'
 
 @app.route('/')
 def home():
-    return render_template('home.html', message='Hello AI World!')
+    return render_template('home.html')
 
 @app.route('/about')
 def about():
@@ -31,11 +31,15 @@ def add_user():
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
-        user = User(username=username, email=email)
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('users'))
-    return render_template('add_user.html')
+        new_user = User(username=username, email=email)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('users'))
+        except:
+            return 'There was an issue adding the user'
+    else:
+        return render_template('add_user.html')
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
