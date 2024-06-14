@@ -41,5 +41,10 @@ def add_user():
     else:
         return render_template('add_user.html')
 
+@app.route('/create_db')
+def create_db():
+    db.create_all()
+    return 'Database tables created!'
+
 if __name__ == "__main__":
     app.run(debug=True)
